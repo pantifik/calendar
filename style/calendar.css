@@ -1,0 +1,15 @@
+table {
+	border-collapse: collapse;
+	min-width: 300px;
+	text-align: center;
+
+}
+
+td,th {
+	border: 1px solid #000;
+}
+
+td:nth-of-type(n+6),
+th:nth-of-type(n+6) {
+	color: red;
+}
