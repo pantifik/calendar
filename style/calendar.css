@@ -1,15 +1,24 @@
 table {
 	border-collapse: collapse;
-	min-width: 300px;
 	text-align: center;
-
+	display: inline-block;
+	margin: 20px;
+	background-color: #EEEEE0;
 }
 
 td,th {
-	border: 1px solid #000;
+	
 }
 
 td:nth-of-type(n+6),
 th:nth-of-type(n+6) {
 	color: red;
+}
+
+td:hover {
+	background: #C1CDC1;
+}
+
+.current-date {
+	background: #CCCCCC;
 }
