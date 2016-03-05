@@ -1,8 +1,41 @@
 $(document).ready(function(){
 
-	createCalendar(2016, 3)
+	/*createCalendar(2016, 1, "prev");
+	createCalendar(2016, 2);
+	createCalendar(2016, 3, "next");*/
+
+	/*$(".js-calendar").append();*/
+
+
+
+	showCalendar(createCalendar(2016, 4));
+
+	function showCalendar (obj) {
+
+		for (key in obj) {
+			var monnth = obj[key];
+			$(".js-calendar").append(obj[key]);
+		}
+
+	}
+
+	function createCalendar (year, month, size) {
+		size = size || 3;
+		month = month - 2;
+		var calendar = [];
+		var date = new Date(year, month)
+		
+
+		for (var i = 0; i < size; i++) {
+			
+			calendar.push(createMonth (year, date.getMonth(date.setMonth(month+i)), i));
+			
+		}
+		
+		return calendar;
+	}
 	
-	function createCalendar (year, month) {
+	function createMonth (year, month, classCSS) {
 
 		const DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
 		var currentDate,
@@ -10,14 +43,11 @@ $(document).ready(function(){
 			table;
 
 		currentDate = new Date;
-		month = month - 1;
+		
 		transmittedData = new Date(year,month);
 
-		
-
-		
 		if ( !table ) {
-			table = "<table><tr>";
+			table = "<table class='" + classCSS + "'><tr>";
 			for (let i = 0; i < 7; i++) {
 				table += "<th>" + DAY[i] + "</th>";
 			}
@@ -33,7 +63,13 @@ $(document).ready(function(){
 
 		while (month == transmittedData.getMonth()) {
 			
-			table += "<td>" + transmittedData.getDate() + "</td>";
+			if ( ((currentDate.getMonth()) == month) && ((currentDate.getFullYear() == year) && (transmittedData.getDate() == currentDate.getDate()) )) {
+				table += "<td class='current-date'>" + transmittedData.getDate() + "</td>";
+				
+			}else{
+				table += "<td>" + transmittedData.getDate() + "</td>";
+			}
+
 			if (getDay(transmittedData) == 6 ) {
 				table += "</tr><tr>"
 			}
@@ -57,11 +93,7 @@ $(document).ready(function(){
 			return day - 1;
 		}
 
-		$(".js-calendar").append(table);
+		return table;
 
-		if ( ((currentDate.getMonth()) == month) && (currentDate.getFullYear() == year )) {
-			var filtr = "td:contains(" + currentDate.getDate() + ")";
-			console.log($(filtr));
-		}
 	}
 });
