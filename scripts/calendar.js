@@ -9,7 +9,6 @@ $(document).ready(function(){
 			};
 
 	calendar(i);
-	console.log (calendar.taskManager);
 
 
 
@@ -112,19 +111,33 @@ $(document).ready(function(){
 		}
 
 		return (function() {
-			$(id).on("click", "td", function(){
+			var workItem,
+				actObj,
+				options,
+				form;
+
+			var options = {
+							  year: 'numeric',
+							  month: 'long',
+							  day: 'numeric',
+							  weekday: 'long',
+							};
+
+			workItem = $(id);
+
+			form = 	'<div><input class="js-new-task form-control" type="text">' + 
+					'<button class="add btn btn-default">Добавить</button></div>';
+
+
+			workItem.append(form)
+
+			workItem.on("click", "td", function(){
 				var actObj = $(this);
-				var options = {
-								  year: 'numeric',
-								  month: 'long',
-								  day: 'numeric',
-								  weekday: 'long',
-								};
+				
 				if ( actObj.text() ) {
 					month = actObj.parents("table").attr("class");
 					year = year;
 					day = actObj.text();
-					console.log("year " + year + " month " + month + " day " + day);
 					actDate = new Date (year, month - 1, day);
 					console.log(actDate.toLocaleString("ru", options))
 				}
