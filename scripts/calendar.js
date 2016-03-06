@@ -9,6 +9,7 @@ $(document).ready(function(){
 			};
 
 	calendar(i);
+	console.log (calendar.taskManager);
 
 
 
@@ -42,7 +43,7 @@ $(document).ready(function(){
 
 			for (var i = 0; i < size; i++) {
 				
-				calendar.push(createMonth (year, date.getMonth(date.setMonth(month+i)), i));
+				calendar.push(createMonth (year, date.getMonth(date.setMonth(month+i)), date.getMonth()+1));
 				
 			}
 			
@@ -109,5 +110,25 @@ $(document).ready(function(){
 			return table;
 
 		}
+
+		return (function() {
+			$(id).on("click", "td", function(){
+				var actObj = $(this);
+				var options = {
+								  year: 'numeric',
+								  month: 'long',
+								  day: 'numeric',
+								  weekday: 'long',
+								};
+				if ( actObj.text() ) {
+					month = actObj.parents("table").attr("class");
+					year = year;
+					day = actObj.text();
+					console.log("year " + year + " month " + month + " day " + day);
+					actDate = new Date (year, month - 1, day);
+					console.log(actDate.toLocaleString("ru", options))
+				}
+			})
+		})()
 	}
 });
