@@ -114,22 +114,23 @@ $(document).ready(function(){
 			var workItem,
 				actObj,
 				options,
-				form;
+				form,
+				taskArray = [];
 
-			var options = {
+			var options = 	{
 							  year: 'numeric',
 							  month: 'long',
 							  day: 'numeric',
 							  weekday: 'long',
 							};
 
-			workItem = $(id);
+			workItem 	= 	$(id);
 
-			form = 	'<div><input class="js-new-task form-control" type="text">' + 
-					'<button class="add btn btn-default">Добавить</button></div>';
+			form 		= 	'<div><input class="js-new-task form-control" type="text">' + 
+							'<button class="add btn btn-default">Добавить</button></div>';
 
 
-			workItem.append(form)
+			workItem.append(form);
 
 			workItem.on("click", "td", function(){
 				var actObj = $(this);
@@ -141,7 +142,30 @@ $(document).ready(function(){
 					actDate = new Date (year, month - 1, day);
 					console.log(actDate.toLocaleString("ru", options))
 				}
-			})
+			});
+
+			workItem.on("click", "button", function(){
+				clickAddButton();
+			});
+
+			 	function clickAddButton(){
+ 
+			 		var task = $(".js-new-task").val();
+			 		if ( !task ){
+			 			return;
+			 		}
+			 
+			 		var valueArr = {
+			 						value: task,
+			 					    attribute: "new"
+			 					};
+			 		$(".js-new-task").val(null);
+			 		taskArray.push(valueArr);
+			 		//showTask(valueArr.value);
+
+			    	return console.log(taskArray);
+				}
+
 		})()
 	}
 });
