@@ -1,10 +1,11 @@
+'use strict'
 $(document).ready(function(){
 
 
 	var calendar = InsertCalendar;
 	var i = {
 				year: 	2016,
-				month: 	3,
+				month: 	7,
 				id: 	".js-calendar"
 			};
 
@@ -14,11 +15,11 @@ $(document).ready(function(){
 
 	function InsertCalendar (obj) {
 
-		var currentDate = 	new Date;
-		year = 				obj.year  || currentDate.getFullYear();
-		month = 			obj.month || currentDate.getMonth();
-		size = 				obj.size  || 3;
-		id = 				obj.id;
+		var currentDate = 		new Date,
+			year = 				obj.year  || currentDate.getFullYear(),
+			month = 			obj.month || currentDate.getMonth(),
+			size = 				obj.size  || 3,
+			id = 				obj.id;
 
 
 		showCalendar(createCalendar(year, month, size), id);
@@ -26,8 +27,8 @@ $(document).ready(function(){
 
 		function showCalendar (obj,id) {
 
-			for (key in obj) {
-				var monnth = obj[key];
+			for (var key in obj) {
+				var month = obj[key];
 				$(id).append(obj[key]);
 			}
 
@@ -42,7 +43,7 @@ $(document).ready(function(){
 
 			for (var i = 0; i < size; i++) {
 				
-				calendar.push(createMonth (year, date.getMonth(date.setMonth(month+i)), i));
+				calendar.push(createMonth (year, date.getMonth(date.setMonth(month+i)), month+i));
 				
 			}
 			
@@ -51,24 +52,23 @@ $(document).ready(function(){
 		
 		function createMonth (year, month, classCSS) {
 
-			const DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
+			var DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
 			var transmittedData,
 				table;
 
 			
-			
 			transmittedData = new Date(year,month);
 
-			if ( !table ) {
-				table = "<table class='" + classCSS + "'><tr>";
-				for (let i = 0; i < 7; i++) {
-					table += "<th>" + DAY[i] + "</th>";
-				}
-				table += "</tr>";
+			table = "<table class='" + classCSS + "'><tr>";
+			for (let i = 0; i < 7; i++) {
+				table += "<th>" + DAY[i] + "</th>";
 			}
+
+			//table += "</tr><tr>";
 
 			//заполняем начало месяца пустыми <td>, если getDay != 0
 			if ( getDay(transmittedData) != 0 ) {
+				table += "</tr><tr>";
 				for (let i = 0; i < getDay(transmittedData); i++) {
 					table += "<td></td>";
 				}
@@ -76,6 +76,10 @@ $(document).ready(function(){
 
 			while (month == transmittedData.getMonth()) {
 				
+				if ( (getDay(transmittedData) == 0 ) ) {
+					table += "</tr><tr>"
+				}
+
 				if ( ((currentDate.getMonth()) == month) && ((currentDate.getFullYear() == year) && (transmittedData.getDate() == currentDate.getDate()) )) {
 					table += "<td class='current-date'>" + transmittedData.getDate() + "</td>";
 					
@@ -83,9 +87,6 @@ $(document).ready(function(){
 					table += "<td>" + transmittedData.getDate() + "</td>";
 				}
 
-				if (getDay(transmittedData) == 6 ) {
-					table += "</tr><tr>"
-				}
 				transmittedData.setDate( transmittedData.getDate() + 1 );
 			}
 
@@ -96,7 +97,7 @@ $(document).ready(function(){
 				}
 			}
 
-
+			table += "</table>"
 
 			function getDay(date) {
 				var day = date.getDay();
