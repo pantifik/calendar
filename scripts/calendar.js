@@ -1,15 +1,15 @@
-'use strict'
+'use strict';
 $(document).ready(function(){
 
 
-	var calendar = InsertCalendar;
+	
 	var i = {
 				year: 	2016,
 				month: 	7,
 				id: 	".js-calendar"
 			};
 
-	calendar(i);
+	InsertCalendar(i);
 
 
 
@@ -35,22 +35,22 @@ $(document).ready(function(){
 		}
 
 		function createCalendar (year, month, size) {
-			
-			month = month - 2;
-			var calendar = [];
-			var date = new Date(year, month)
+			// size кол-во генерируемых месяцев, возможно когда нибудь заработает генерация больше 3х месяцев
+			month = 		month - 2; //****magic**** month получаем в человеческой форме, -1 делаем его нечеловеческим, -1 начинаем с предыдущего месяца
+			var calendar = 	[];
+			var date = 		new Date(year, month)
 			
 
 			for (var i = 0; i < size; i++) {
 				
-				calendar.push(createMonth (year, date.getMonth(date.setMonth(month+i)), month+i));
+				calendar.push( createMonth( year, date.getMonth( date.setMonth(month+i) ) ) );
 				
 			}
 			
 			return calendar;
 		}
 		
-		function createMonth (year, month, classCSS) {
+		function createMonth (year, month) {
 
 			var DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
 			var transmittedData,
@@ -59,13 +59,12 @@ $(document).ready(function(){
 			
 			transmittedData = new Date(year,month);
 
-			table = "<table class='" + classCSS + "'><tr>";
+			table = "<table class='" + (month+1) + "'><tr>";
 			for (let i = 0; i < 7; i++) {
 				table += "<th>" + DAY[i] + "</th>";
 			}
 
-			//table += "</tr><tr>";
-
+			
 			//заполняем начало месяца пустыми <td>, если getDay != 0
 			if ( getDay(transmittedData) != 0 ) {
 				table += "</tr><tr>";
