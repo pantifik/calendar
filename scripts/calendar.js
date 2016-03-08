@@ -1,91 +1,102 @@
+'use strict';
 $(document).ready(function(){
 
 
-	var calendar = InsertCalendar;
-	var i = {
-				year: 	2016,
-				month: 	3,
-				id: 	".js-calendar"
-			};
-
-	calendar(i);
-
+	var calendar = new InsertCalendar(2016, 3, ".js-calendar");
+	
+	calendar.insert();
+	console.log(calendar);
+	calendar.set(2016, 9, ".js-calendar2");
+	console.log(calendar);
+	calendar.insert();
 
 
-	function InsertCalendar (obj) {
 
-		var currentDate = 	new Date;
-		year = 				obj.year  || currentDate.getFullYear();
-		month = 			obj.month || currentDate.getMonth();
-		size = 				obj.size  || 3;
-		id = 				obj.id;
+	function InsertCalendar (year, month, id, size) {
 
+			var SELF = this;
+			this.currentDate = 		new Date;
+			this.year = 			year  || this.currentDate.getFullYear();
+			this.month = 			month || this.currentDate.getMonth();
+			this.size = 			size  || 3;
+			this.id = 				id;
+		
+		this.insert = function() {
 
-		showCalendar(createCalendar(year, month, size), id);
+			showCalendar(createCalendar(this.year, this.month, this.size), this.id);
 
+		};
+
+		this.set = function(year, month, id, size) {
+
+			this.year = 			year;
+			this.month = 			month;
+			//this.size = 			size;  до лучших времен
+			this.id = 				id;
+
+		};
 
 		function showCalendar (obj,id) {
 
-			for (key in obj) {
-				var monnth = obj[key];
+			for (var key in obj) {
+				var month = obj[key];
 				$(id).append(obj[key]);
 			}
 
-		}
+		};
 
 		function createCalendar (year, month, size) {
-			
-			month = month - 2;
-			var calendar = [];
-			var date = new Date(year, month)
+			// size кол-во генерируемых месяцев, возможно когда нибудь заработает генерация больше 3х месяцев
+			month = 		month - 2; //****magic**** month получаем в человеческой форме, -1 делаем его нечеловеческим, -1 начинаем с предыдущего месяца
+			var calendar = 	[];
+			var date = 		new Date(year, month)
 			
 
 			for (var i = 0; i < size; i++) {
 				
-				calendar.push(createMonth (year, date.getMonth(date.setMonth(month+i)), date.getMonth()+1));
+				calendar.push( createMonth( year, date.getMonth( date.setMonth(month+i) ) ) );
 				
-			}
+			};
 			
 			return calendar;
-		}
+		};
 		
-		function createMonth (year, month, classCSS) {
+		function createMonth (year, month) {
 
-			const DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
+			var DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
 			var transmittedData,
 				table;
 
 			
-			
 			transmittedData = new Date(year,month);
 
-			if ( !table ) {
-				table = "<table class='" + classCSS + "'><tr>";
-				for (let i = 0; i < 7; i++) {
-					table += "<th>" + DAY[i] + "</th>";
-				}
-				table += "</tr>";
+			table = "<table class='" + (month+1) + "'><tr>";
+			for (var i = 0; i < 7; i++) {
+				table += "<th>" + DAY[i] + "</th>";
 			}
 
+			
 			//заполняем начало месяца пустыми <td>, если getDay != 0
 			if ( getDay(transmittedData) != 0 ) {
-				for (let i = 0; i < getDay(transmittedData); i++) {
+				table += "</tr><tr>";
+				for ( i = 0; i < getDay(transmittedData); i++) {
 					table += "<td></td>";
 				}
 			}
 
 			while (month == transmittedData.getMonth()) {
 				
-				if ( ((currentDate.getMonth()) == month) && ((currentDate.getFullYear() == year) && (transmittedData.getDate() == currentDate.getDate()) )) {
+				if ( (getDay(transmittedData) == 0 ) ) {
+					table += "</tr><tr>"
+				}
+
+				if ( ((SELF.currentDate.getMonth()) == month) && ((SELF.currentDate.getFullYear() == year) && (transmittedData.getDate() == SELF.currentDate.getDate()) )) {
 					table += "<td class='current-date'>" + transmittedData.getDate() + "</td>";
 					
 				}else{
 					table += "<td>" + transmittedData.getDate() + "</td>";
 				}
 
-				if (getDay(transmittedData) == 6 ) {
-					table += "</tr><tr>"
-				}
 				transmittedData.setDate( transmittedData.getDate() + 1 );
 			}
 
@@ -96,7 +107,7 @@ $(document).ready(function(){
 				}
 			}
 
-
+			table += "</table>"
 
 			function getDay(date) {
 				var day = date.getDay();
