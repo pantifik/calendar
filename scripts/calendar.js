@@ -5,7 +5,6 @@ $(document).ready(function(){
 	var calendar = new InsertCalendar(2016, 3, ".js-calendar");
 	
 	calendar.insert();
-	console.log(calendar);
 	calendar.set(2016, 9, ".js-calendar2");
 	console.log(calendar);
 	calendar.insert();
@@ -24,6 +23,7 @@ $(document).ready(function(){
 		this.insert = function() {
 
 			showCalendar(createCalendar(this.year, this.month, this.size), this.id);
+			taskManager();
 
 		};
 
@@ -121,7 +121,7 @@ $(document).ready(function(){
 
 		}
 
-		return (function() {
+		function taskManager() {
 			var workItem,
 				actObj,
 				options,
@@ -135,7 +135,7 @@ $(document).ready(function(){
 							  weekday: 'long',
 							};
 
-			workItem 	= 	$(id);
+			workItem 	= 	$(SELF.id);
 
 			form 		= 	'<div><input class="js-new-task form-control" type="text">' + 
 							'<button class="add btn btn-default">Добавить</button></div>';
@@ -147,10 +147,10 @@ $(document).ready(function(){
 				var actObj = $(this);
 				
 				if ( actObj.text() ) {
-					month = actObj.parents("table").attr("class");
-					year = year;
-					day = actObj.text();
-					actDate = new Date (year, month - 1, day);
+					var month = actObj.parents("table").attr("class"),
+						year = SELF.year,
+						day = actObj.text(),
+						actDate = new Date (year, month - 1, day);
 					console.log(actDate.toLocaleString("ru", options))
 				}
 			});
@@ -177,6 +177,6 @@ $(document).ready(function(){
 			    	return console.log(taskArray);
 				}
 
-		})()
+		};
 	}
 });
