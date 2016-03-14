@@ -22,3 +22,12 @@ td:hover {
 .current-date {
 	background: #CCCCCC;
 }
+
+.first-day,
+.last-day {
+	
+}
+
+.completed-task {
+	text-decoration: line-through;
+}
