@@ -2,15 +2,13 @@
 $(document).ready(function(){
 
 
-    var calendar = new InsertCalendar(2016, 3, ".js-calendar");
+    var calendar = new InsertCalendar(2016, 12, ".js-calendar");
     
     calendar.insert();
 
-
-
     function InsertCalendar (year, month, id, size) {
 
-            var SELF = this;
+            var self = this;
             this.currentDate =      new Date;
             this.year =             year  || this.currentDate.getFullYear();
             this.month =            month || this.currentDate.getMonth();
@@ -45,13 +43,14 @@ $(document).ready(function(){
         function createCalendar (year, month, size) {
             // size кол-во генерируемых месяцев, возможно когда нибудь заработает генерация больше 3х месяцев
             month =         month - 2; //****magic**** month получаем в человеческой форме, -1 делаем его нечеловеческим, -1 начинаем с предыдущего месяца
+
             var calendar =  [];
             var date =      new Date(year, month)
             
-
+            console.log(date);
             for (var i = 0; i < size; i++) {
                 
-                calendar.push( createMonth( year, date.getMonth( date.setMonth(month+i) ) ) );
+                calendar.push( createMonth( date.getFullYear(), date.getMonth( date.setMonth(month+i) ) ) );
                 
             };
             
@@ -87,7 +86,7 @@ $(document).ready(function(){
                     table += "</tr><tr>"
                 }
 
-                if ( ((SELF.currentDate.getMonth()) == month) && ((SELF.currentDate.getFullYear() == year) && (transmittedData.getDate() == SELF.currentDate.getDate()) )) {
+                if ( ((self.currentDate.getMonth()) == month) && ((self.currentDate.getFullYear() == year) && (transmittedData.getDate() == self.currentDate.getDate()) )) {
                     table += "<td class='current-date'>" + transmittedData.getDate() + "</td>";
                     
                 }else{
@@ -119,13 +118,15 @@ $(document).ready(function(){
         }
 
         function taskManager() {
-            //разобраться с классами при создании 2го экземпляра календаря class = this.id + "-className" || use id
+            
             var workItem,
                 actObj,
                 options,
                 form,
                 onFocusInput,
-                taskArray;
+                parentClass,
+                taskArray,
+                actDate = new Date();
 
             var options =   {
                               year: 'numeric',
@@ -134,19 +135,20 @@ $(document).ready(function(){
                               weekday: 'long',
                             };
 
-            workItem    =   $(SELF.id);
-
-            form        =   '<div><input class="first-day" type="text"><br><input class="js-new-task form-control" type="text"><br>' + 
-                            '<input class="last-day" type="text"><button class="add btn btn-default">Добавить</button></div>';
+            workItem    =   $(self.id);
+            parentClass = self.id.slice(1);
+            
+            form        =   '<div><input class="' + parentClass + '-new-task form-control" type="text"><br>' + 
+                            '<button class="add btn btn-default">Добавить</button></div>';
 
 
             workItem.append(form);
-            workItem.append('<ul class="tasks"></ul>');
+            workItem.append('<ul class="' + parentClass + 'tasks"></ul>');
 
-            if (localStorage.taskArray) {
-                
+            if (localStorage[parentClass]) {
+
                 try {
-                    taskArray = JSON.parse(localStorage.taskArray);
+                    taskArray = JSON.parse(localStorage[parentClass]);
                     for (var i = 0; taskArray.length > i; i++) {
                     showTask(taskArray[i].value, taskArray[i].attribute);
                     }
@@ -164,21 +166,20 @@ $(document).ready(function(){
             workItem.on("focus", "input", function(){
                 
                 onFocusInput = this;
-                workItem.on("click", "td", function(){
-                    var actObj = $(this);
-
-
-                    if ( actObj.text() ) {
-                        var month = actObj.parents("table").attr("class"),
-                            year = SELF.year,
-                            day = actObj.text(),
-                            actDate = new Date (year, month - 1, day);
-                        console.log(actDate.toLocaleString("ru", options))
-                        console.log(onFocusInput)
-                        $(onFocusInput).val(actDate.toLocaleString("ru", options));
-                    }
-                });
+                
             
+            });
+
+            workItem.on("click", "td", function(){
+                var actObj = $(this);
+
+                if ( actObj.text() ) {
+                    var month = actObj.parents("table").attr("class"),
+                        year = self.year,
+                        day = actObj.text();
+                    actDate = new Date(year, month - 1, day);
+                    $(onFocusInput).val(actDate.toLocaleString("ru", options));
+                }
             });
 
             workItem.on("click", "button", function(){
@@ -201,54 +202,52 @@ $(document).ready(function(){
 
             function supportsStorage() {
 
-                try {
-                  return 'localStorage' in window && window['localStorage'] !== null;
-                } catch (e) {
-                  return false;
-                }
-                
+                return 'localStorage' in window && window['localStorage'] !== null;
+                                
             };
 
             function saveTask(arr) {
-
+                
                 if ( !supportsStorage() ) {
                 return false;
                 }
                 if (!arr.length) {
-                    return delete localStorage.taskArray;
+                    return localStorage.removeItem(parentClass);
                 }
-                localStorage.taskArray = JSON.stringify(arr);
+                
+                localStorage[parentClass] = JSON.stringify(arr);
 
             };
 
             function clickAddButton(){
-
-                var task = $(".js-new-task").val();
+                
+                var task = $(self.id + "-new-task").val();
                 if ( !task ){
-                    return;
+                    return taskArray;
                 }
          
                 var valueArr = {
+                                date: actDate,
                                 value: task,
                                 attribute: "new"
                             };
-                $(".js-new-task").val(null);
+                $(self.id + "-new-task").val(null);
                 taskArray.push(valueArr);
-                showTask(valueArr.value);
+                showTask(valueArr.value, valueArr.attribute, valueArr.date);
 
                 return taskArray;
             };
 
 
-            function showTask(value, attr){
+            function showTask(value, attr, date){
          
-                var a;
-                if (attr) {
-                  a = "<li class=\"" + attr + "\">" + value + "<br><div class=\"btn-group\"><button class=\"completed btn btn-default btn-xs\"><span class=\"glyphicon glyphicon-ok\"></span> Выполнено</button><button class=\"del btn btn-default btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span> Удалить</button></div></li>";
-                }else{
-                    a = "<li>" + value + "<br><div class=\"btn-group\"><button class=\"completed btn btn-default btn-xs\"><span class=\"glyphicon glyphicon-ok\"></span> Выполнено</button><button class=\"del btn btn-default btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span> Удалить</button></div></li>";
-                }
-                return $(".tasks").append(a);
+                  var a = "<li class=\"" + attr + "\"><span>" + date.toLocaleString("ru", options) + "</span>" + value + "<br>" + 
+                  "<div class=\"btn-group\"><button class=\"completed btn btn-default btn-xs\">" + 
+                  "<span class=\"glyphicon glyphicon-ok\"></span> Выполнено</button>" + 
+                  "<button class=\"del btn btn-default btn-xs\"><span class=\"glyphicon glyphicon-remove\">" + 
+                  "</span> Удалить</button></div></li>";
+                
+                return $(self.id + "tasks").append(a);
          
             };
 
