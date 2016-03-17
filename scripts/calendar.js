@@ -49,73 +49,76 @@ $(document).ready(function(){
             
             console.log(date);
             for (var i = 0; i < size; i++) {
-                
-                calendar.push( createMonth( date.getFullYear(), date.getMonth( date.setMonth(month+i) ) ) );
+                date.setMonth(month+i);
+                calendar.push( createMonth( date.getFullYear(), date.getMonth() ) );
                 
             };
             
             return calendar;
+
+            function createMonth (year, month) {
+
+                var DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
+                var transmittedData,
+                    table;
+
+                
+                transmittedData = new Date(year,month);
+
+                table = "<table class='" + (month+1) + "'><caption>" + transmittedData.toLocaleString("ru", {month: "long", year: "numeric"}) 
+                        + "</caption><tr>";
+                for (var i = 0; i < 7; i++) {
+                    table += "<th>" + DAY[i] + "</th>";
+                }
+
+                
+                //заполняем начало месяца пустыми <td>, если getDay != 0
+                if ( getDay(transmittedData) != 0 ) {
+                    table += "</tr><tr>";
+                    for ( i = 0; i < getDay(transmittedData); i++) {
+                        table += "<td></td>";
+                    }
+                }
+
+                while (month == transmittedData.getMonth()) {
+                    
+                    if ( (getDay(transmittedData) == 0 ) ) {
+                        table += "</tr><tr>"
+                    }
+
+                    if ( ((self.currentDate.getMonth()) == month) && ((self.currentDate.getFullYear() == year) && (transmittedData.getDate() == self.currentDate.getDate()) )) {
+                        table += "<td class='current-date'>" + transmittedData.getDate() + "</td>";
+                        
+                    }else{
+                        table += "<td>" + transmittedData.getDate() + "</td>";
+                    }
+
+                    transmittedData.setDate( transmittedData.getDate() + 1 );
+                }
+
+                transmittedData.setDate( transmittedData.getDate() - 1 );
+                if ( getDay(transmittedData) != 6 ) {
+                    for (let i = 6; i > getDay(transmittedData); i--) {
+                        table += "<td></td>";
+                    }
+                }
+
+                table += "</table>"
+
+                function getDay(date) {
+                    var day = date.getDay();
+                    if (day == 0) {
+                        day = 7;
+                    }
+                    return day - 1;
+                }
+
+                return table;
+
+            };
         };
         
-        function createMonth (year, month) {
 
-            var DAY = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
-            var transmittedData,
-                table;
-
-            
-            transmittedData = new Date(year,month);
-
-            table = "<table class='" + (month+1) + "'><tr>";
-            for (var i = 0; i < 7; i++) {
-                table += "<th>" + DAY[i] + "</th>";
-            }
-
-            
-            //заполняем начало месяца пустыми <td>, если getDay != 0
-            if ( getDay(transmittedData) != 0 ) {
-                table += "</tr><tr>";
-                for ( i = 0; i < getDay(transmittedData); i++) {
-                    table += "<td></td>";
-                }
-            }
-
-            while (month == transmittedData.getMonth()) {
-                
-                if ( (getDay(transmittedData) == 0 ) ) {
-                    table += "</tr><tr>"
-                }
-
-                if ( ((self.currentDate.getMonth()) == month) && ((self.currentDate.getFullYear() == year) && (transmittedData.getDate() == self.currentDate.getDate()) )) {
-                    table += "<td class='current-date'>" + transmittedData.getDate() + "</td>";
-                    
-                }else{
-                    table += "<td>" + transmittedData.getDate() + "</td>";
-                }
-
-                transmittedData.setDate( transmittedData.getDate() + 1 );
-            }
-
-            transmittedData.setDate( transmittedData.getDate() - 1 );
-            if ( getDay(transmittedData) != 6 ) {
-                for (let i = 6; i > getDay(transmittedData); i--) {
-                    table += "<td></td>";
-                }
-            }
-
-            table += "</table>"
-
-            function getDay(date) {
-                var day = date.getDay();
-                if (day == 0) {
-                    day = 7;
-                }
-                return day - 1;
-            }
-
-            return table;
-
-        }
 
         function taskManager() {
             
