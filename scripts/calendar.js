@@ -2,11 +2,8 @@
 $(document).ready(function(){
 
 
-    var calendar = new InsertCalendar(2016, 12, ".js-calendar");
-    
-    calendar.insert();
 
-    function InsertCalendar (year, month, id, size) {
+    function Calendar (year, month, id, size) {
 
             var self = this;
             this.currentDate =      new Date;
@@ -15,40 +12,16 @@ $(document).ready(function(){
             this.size =             size  || 3;
             this.id =               id;
         
-        this.insert = function() {
 
-            showCalendar(createCalendar(this.year, this.month, this.size), this.id);
-            taskManager();
-
-        };
-
-        this.set = function(year, month, id, size) {
-
-            this.year =             year;
-            this.month =            month;
-            //this.size =           size;  до лучших времен
-            this.id =               id;
-
-        };
-
-        function showCalendar (obj,id) {
-
-            for (var key in obj) {
-                var month = obj[key];
-                $(id).append(obj[key]);
-            }
-
-        };
-
-        function createCalendar (year, month, size) {
+        this.getCalendarHTML = function () {
             // size кол-во генерируемых месяцев, возможно когда нибудь заработает генерация больше 3х месяцев
-            month =         month - 2; //****magic**** month получаем в человеческой форме, -1 делаем его нечеловеческим, -1 начинаем с предыдущего месяца
+            var month =         self.month - 2; //****magic**** month получаем в человеческой форме, -1 делаем его нечеловеческим, -1 начинаем с предыдущего месяца
 
             var calendar =  [];
             var date =      new Date(year, month)
             
             console.log(date);
-            for (var i = 0; i < size; i++) {
+            for (var i = 0; i < self.size; i++) {
                 date.setMonth(month+i);
                 calendar.push( createMonth( date.getFullYear(), date.getMonth() ) );
                 
@@ -116,9 +89,9 @@ $(document).ready(function(){
                 return table;
 
             };
+        
         };
         
-
 
         function taskManager() {
             
@@ -272,5 +245,36 @@ $(document).ready(function(){
             };
 
         };
+        
     };
+
+    Calendar.prototype.set = function(year, month, id, size) {
+
+            this.year =             year;
+            this.month =            month;
+            //this.size =           size;  до лучших времен
+            this.id =               id;
+
+    };
+
+    Calendar.prototype.show = function () {
+
+            var obj = this.getCalendarHTML();
+            for (var key in obj) {
+                var month = obj[key];
+                $(this.id).append(obj[key]);
+            };
+
+    };
+
+    var calendar = new Calendar(2016, 12, ".js-calendar");
+    console.log(calendar);
+    calendar.show();
+    calendar.set(2016, 3, ".js-calendar");
+    console.log(calendar);
+    calendar.show();
+
+    /*calendar.set(2016, 3, ".js-calendar2");
+    calendar.show();
+*/
 });
